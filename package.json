@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-amplify/api": "^6.3.9",
+    "@aws-amplify/ui-react": "^6.11.0",
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/vite": "^4.0.17",
+    "@tanstack/react-query": "^5.74.4",
     "aws-amplify": "^6.14.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
