@@ -1,3 +1,4 @@
+import { env } from "$amplify/env/todo-list";
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { Handler } from "aws-lambda";
@@ -6,7 +7,7 @@ const client = new DynamoDBClient({});
 
 export const handler: Handler = async (event, context) => {
 	const command = new ScanCommand({
-		TableName: process.env.TODO_TABLE_NAME,
+		TableName: env.TODO_LIST_TABLE_NAME,
 	});
 
 	const response = await client.send(command);
@@ -15,6 +16,6 @@ export const handler: Handler = async (event, context) => {
 
 	return {
 		statusCode: 200,
-		body: JSON.stringify({ todos }),
+		body: todos,
 	};
 };

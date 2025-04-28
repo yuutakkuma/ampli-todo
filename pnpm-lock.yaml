@@ -17,9 +17,6 @@ importers:
       '@aws-sdk/client-dynamodb':
         specifier: ^3.797.0
         version: 3.797.0
-      '@aws-sdk/client-lambda':
-        specifier: ^3.797.0
-        version: 3.797.0
       '@aws-sdk/util-dynamodb':
         specifier: ^3.797.0
         version: 3.797.0(@aws-sdk/client-dynamodb@3.797.0)

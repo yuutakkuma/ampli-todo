@@ -1,8 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "../App";
-import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
-import { fetchAuthSession } from "aws-amplify/auth";
-import outputs from "../../amplify_outputs.json";
+
+type TodoListResonse = {
+	id: string;
+	content: string;
+	isDone: boolean;
+	createdAt: string;
+	updatedAt: string;
+};
 
 export function TodoList() {
 	const {
@@ -11,27 +16,15 @@ export function TodoList() {
 		refetch,
 	} = useQuery({
 		queryKey: ["TODO_LIST"],
-		queryFn: async () => {
-			const hello = await client.queries.sayHello({ name: "TodoList" });
-			console.log({ hello });
+		queryFn: async (): Promise<TodoListResonse[]> => {
+			const list = await client.queries.getTodoList();
+			if (!list.data?.body || typeof list.data?.body !== "string") {
+				throw new Error("not body data.");
+			}
 
-			return client.models.Todo.list();
-			// const { credentials } = await fetchAuthSession();
-			// const awsRegion = outputs.auth.aws_region;
-			// const functionName = outputs.custom.todoListFunctionName;
+			const response = JSON.parse(list.data.body);
 
-			// const lambda = new LambdaClient({ credentials, region: awsRegion });
-			// const command = new InvokeCommand({
-			// 	FunctionName: functionName,
-			// });
-			// const response = await lambda.send(command);
-
-			// if (response.Payload) {
-			// 	const payload = JSON.parse(new TextDecoder().decode(response.Payload));
-			// 	console.log("lambda response: ", JSON.stringify(payload));
-			// }
-
-			// return response;
+			return response as TodoListResonse[];
 		},
 	});
 	const { isPending: deleteIsPending, mutate: deleteMutate } = useMutation({
@@ -55,7 +48,7 @@ export function TodoList() {
 		return <p>isLoading...</p>;
 	}
 
-	if (!todos?.data.length) {
+	if (!todos?.length) {
 		return <p>no todo data.</p>;
 	}
 
@@ -63,7 +56,7 @@ export function TodoList() {
 
 	return (
 		<div style={{ width: "100%", display: "flex", alignItems: "center", flexDirection: "column" }}>
-			{todos?.data.map((todo) => (
+			{todos?.map((todo) => (
 				<div
 					key={todo.id}
 					style={{
