@@ -18,16 +18,16 @@ export function TodoList() {
 		queryKey: ["TODO_LIST"],
 		queryFn: async (): Promise<TodoListResonse[]> => {
 			const list = await client.queries.getTodoList();
+
 			if (!list.data?.body || typeof list.data?.body !== "string") {
 				throw new Error("not body data.");
 			}
 
 			const response = JSON.parse(list.data.body);
-
 			return response as TodoListResonse[];
 		},
 	});
-	const { isPending: deleteIsPending, mutate: deleteMutate } = useMutation({
+	const { isPending: deleteIsPending, mutateAsync: deleteMutate } = useMutation({
 		mutationFn: (id: string) => {
 			return client.models.Todo.delete({ id });
 		},
@@ -35,7 +35,7 @@ export function TodoList() {
 			refetch();
 		},
 	});
-	const { isPending: updateIsPending, mutate: updateMutate } = useMutation({
+	const { isPending: updateIsPending, mutateAsync: updateMutate } = useMutation({
 		mutationFn: ({ id, isDone }: { id: string; isDone: boolean }) => {
 			return client.models.Todo.update({ id, isDone });
 		},
@@ -78,8 +78,11 @@ export function TodoList() {
 						<b>{todo.createdAt}</b>
 						<button
 							style={{ backgroundColor: todo.isDone ? "darkorange" : "yellowgreen", marginLeft: 10, marginRight: 10 }}
-							onClick={() => {
-								updateMutate({ id: todo.id, isDone: !todo.isDone });
+							onClick={async () => {
+								const result = await updateMutate({ id: todo.id, isDone: !todo.isDone });
+								if (result.errors) {
+									alert("ゲストユーザーはデータの更新はできません。");
+								}
 							}}
 						>
 							{todo.isDone ? "UNDO" : "DONE"}
@@ -87,8 +90,11 @@ export function TodoList() {
 						<button
 							style={{ backgroundColor: "crimson", marginRight: 10 }}
 							disabled={isMutationPending}
-							onClick={() => {
-								deleteMutate(todo.id);
+							onClick={async () => {
+								const result = await deleteMutate(todo.id);
+								if (result.errors) {
+									alert("ゲストユーザーはデータの更新はできません。");
+								}
 							}}
 						>
 							DELETE

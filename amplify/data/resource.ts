@@ -1,7 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { sayHello } from "../functions/say-hello/resource";
 import { todoList } from "../functions/todo-list/resource";
-import { handler as todoHandler } from "../functions/todo-list/handler";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -15,14 +14,14 @@ const schema = a.schema({
 			content: a.string(),
 			isDone: a.boolean(),
 		})
-		.authorization((allow) => [allow.authenticated()]),
+		.authorization((allow) => [allow.authenticated(), allow.guest().to(["read", "create"])]),
 	sayHello: a
 		.query()
 		.arguments({
 			name: a.string(),
 		})
 		.returns(a.string())
-		.authorization((allow) => [allow.authenticated()])
+		.authorization((allow) => [allow.authenticated(), allow.guest()])
 		.handler(a.handler.function(sayHello)),
 	getTodoList: a
 		.query()
@@ -32,7 +31,7 @@ const schema = a.schema({
 				body: a.json(),
 			}),
 		)
-		.authorization((allow) => [allow.authenticated()])
+		.authorization((allow) => [allow.authenticated(), allow.guest()])
 		.handler(a.handler.function(todoList)),
 });
 
@@ -41,7 +40,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
 	schema,
 	authorizationModes: {
-		defaultAuthorizationMode: "userPool",
+		defaultAuthorizationMode: "iam",
 	},
 });
 
