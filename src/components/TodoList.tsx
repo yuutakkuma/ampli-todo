@@ -1,5 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "../App";
+import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
+import { fetchAuthSession } from "aws-amplify/auth";
+import outputs from "../../amplify_outputs.json";
 
 export function TodoList() {
 	const {
@@ -8,8 +11,27 @@ export function TodoList() {
 		refetch,
 	} = useQuery({
 		queryKey: ["TODO_LIST"],
-		queryFn: () => {
+		queryFn: async () => {
+			const hello = await client.queries.sayHello({ name: "TodoList" });
+			console.log({ hello });
+
 			return client.models.Todo.list();
+			// const { credentials } = await fetchAuthSession();
+			// const awsRegion = outputs.auth.aws_region;
+			// const functionName = outputs.custom.todoListFunctionName;
+
+			// const lambda = new LambdaClient({ credentials, region: awsRegion });
+			// const command = new InvokeCommand({
+			// 	FunctionName: functionName,
+			// });
+			// const response = await lambda.send(command);
+
+			// if (response.Payload) {
+			// 	const payload = JSON.parse(new TextDecoder().decode(response.Payload));
+			// 	console.log("lambda response: ", JSON.stringify(payload));
+			// }
+
+			// return response;
 		},
 	});
 	const { isPending: deleteIsPending, mutate: deleteMutate } = useMutation({

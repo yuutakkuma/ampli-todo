@@ -8,7 +8,7 @@
 	"files": {
 		"ignoreUnknown": false,
 		"ignore": ["node_modules", "public", ".vscode", "pnpm-lock.yaml"],
-		"include": ["src/**/*.tsx", "src/**/*.ts"]
+		"include": ["src/**/*.tsx", "src/**/*.ts", "amplify/**/*.ts"]
 	},
 	"formatter": {
 		"enabled": true,
