@@ -1,4 +1,4 @@
-import { defineFunction, a } from "@aws-amplify/backend";
+import { defineFunction } from "@aws-amplify/backend";
 
 export const todoList = defineFunction({
 	name: "todo-list",
