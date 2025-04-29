@@ -79,10 +79,7 @@ export function TodoList() {
 						<button
 							style={{ backgroundColor: todo.isDone ? "darkorange" : "yellowgreen", marginLeft: 10, marginRight: 10 }}
 							onClick={async () => {
-								const result = await updateMutate({ id: todo.id, isDone: !todo.isDone });
-								if (result.errors) {
-									alert("ゲストユーザーはデータの更新はできません。");
-								}
+								updateMutate({ id: todo.id, isDone: !todo.isDone });
 							}}
 						>
 							{todo.isDone ? "UNDO" : "DONE"}
@@ -91,10 +88,7 @@ export function TodoList() {
 							style={{ backgroundColor: "crimson", marginRight: 10 }}
 							disabled={isMutationPending}
 							onClick={async () => {
-								const result = await deleteMutate(todo.id);
-								if (result.errors) {
-									alert("ゲストユーザーはデータの更新はできません。");
-								}
+								deleteMutate(todo.id);
 							}}
 						>
 							DELETE

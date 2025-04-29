@@ -11,17 +11,18 @@ and "delete" any "Todo" records.
 const schema = a.schema({
 	Todo: a
 		.model({
+			userId: a.string(),
 			content: a.string(),
 			isDone: a.boolean(),
 		})
-		.authorization((allow) => [allow.authenticated(), allow.guest().to(["read", "create"])]),
+		.authorization((allow) => [allow.authenticated()]),
 	sayHello: a
 		.query()
 		.arguments({
 			name: a.string(),
 		})
 		.returns(a.string())
-		.authorization((allow) => [allow.authenticated(), allow.guest()])
+		.authorization((allow) => [allow.authenticated()])
 		.handler(a.handler.function(sayHello)),
 	getTodoList: a
 		.query()
@@ -31,7 +32,7 @@ const schema = a.schema({
 				body: a.json(),
 			}),
 		)
-		.authorization((allow) => [allow.authenticated(), allow.guest()])
+		.authorization((allow) => [allow.authenticated()])
 		.handler(a.handler.function(todoList)),
 });
 
@@ -40,7 +41,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
 	schema,
 	authorizationModes: {
-		defaultAuthorizationMode: "iam",
+		defaultAuthorizationMode: "userPool",
 	},
 });
 

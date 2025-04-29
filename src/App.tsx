@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
@@ -14,7 +13,6 @@ const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			retry: 1,
-			staleTime: 0,
 		},
 	},
 });
@@ -25,24 +23,10 @@ export const client = generateClient<Schema>();
 
 function App() {
 	const { authStatus, signOut } = useAuthenticator();
-	const [isGuest, setIsGuest] = useState<boolean>(false);
 
-	if (authStatus === "unauthenticated" && !isGuest)
-		return (
-			<div>
-				<Authenticator />
-				<button
-					onClick={() => {
-						setIsGuest(true);
-					}}
-				>
-					ゲストユーザーで使用する
-				</button>
-			</div>
-		);
+	if (authStatus === "unauthenticated") return <Authenticator />;
 
 	const logout = () => {
-		setIsGuest(false);
 		signOut();
 	};
 

@@ -1,15 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { client } from "../App";
 import { useState } from "react";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+
+type AddTodo = {
+	userId: string;
+	content: string;
+};
 
 export function AddTodo() {
 	const queryClient = useQueryClient();
 	const [value, setValue] = useState<string>("");
-	const { mutate } = useMutation({
-		mutationFn: (content: string) => {
-			console.log("mutation add todo.");
+	const { user } = useAuthenticator();
 
-			return client.models.Todo.create({ content, isDone: false });
+	const { mutate } = useMutation({
+		mutationFn: ({ content, userId }: AddTodo) => {
+			return client.models.Todo.create({ userId, content, isDone: false });
 		},
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ["TODO_LIST"], refetchType: "all" });
@@ -38,8 +44,8 @@ export function AddTodo() {
 			</button>
 			<button
 				onClick={async () => {
-					if (value) {
-						mutate(value);
+					if (value && user.userId) {
+						mutate({ content: value, userId: user.userId });
 					}
 				}}
 			>
